@@ -3,53 +3,57 @@ import random
 import sys
 
 pygame.init()
-
-WIDTH, HEIGHT = 400, 300
+WIDTH, HEIGHT = 600, 300
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Guess the Number - GLM Lab")
+pygame.display.set_caption("Endless Runner - GLM Lab")
+clock = pygame.time.Clock()
 
-font = pygame.font.Font(None, 32)
-secret_number = random.randint(1, 100)
-user_input = ""
-feedback = "Type your guess and hit Enter!"
-attempts = 0
+player_y = 220
+player_vel_y = 0
+is_jumping = False
+obstacle_x = 600
+score = 0
+game_over = False
+
+font = pygame.font.Font(None, 36)
 
 while True:
-    screen.fill((30, 30, 30))
-    
+    screen.fill((135, 206, 235))
+    pygame.draw.rect(screen, (34, 139, 34), (0, 250, WIDTH, 50))
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                if user_input.isdigit():
-                    guess = int(user_input)
-                    attempts += 1
-                    if guess < secret_number:
-                        feedback = "Too low!"
-                    elif guess > secret_number:
-                        feedback = "Too high!"
-                    else:
-                        feedback = f"Correct! Steps: {attempts}. Resetting..."
-                        secret_number = random.randint(1, 100)
-                        attempts = 0
-                else:
-                    feedback = "Please type a valid number!"
-                user_input = ""
-            elif event.key == pygame.K_BACKSPACE:
-                user_input = user_input[:-1]
-            else:
-                if event.unicode.isdigit():
-                    user_input += event.unicode
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and not is_jumping and not game_over:
+                player_vel_y = -12
+                is_jumping = True
 
-    # Render texts
-    txt_title = font.render("Guess Number (1-100)", True, (255, 255, 255))
-    txt_input = font.render(f"Your Guess: {user_input}", True, (0, 255, 255))
-    txt_feedback = font.render(feedback, True, (255, 255, 0))
-    
-    screen.blit(txt_title, (50, 40))
-    screen.blit(txt_input, (50, 120))
-    screen.blit(txt_feedback, (50, 200))
-    
+    if not game_over:
+        if is_jumping:
+            player_y += player_vel_y
+            player_vel_y += 0.8
+            if player_y >= 220:
+                player_y = 220
+                is_jumping = False
+
+        obstacle_x -= 7
+        if obstacle_x < -20:
+            obstacle_x = 600
+            score += 1
+
+        player_rect = pygame.draw.rect(screen, (255, 0, 0), (50, player_y, 30, 30))
+        obstacle_rect = pygame.draw.rect(screen, (0, 0, 0), (obstacle_x, 220, 20, 30))
+
+        if player_rect.colliderect(obstacle_rect):
+            game_over = True
+
+        txt_score = font.render(f"Score: {score}", True, (0, 0, 0))
+        screen.blit(txt_score, (20, 20))
+    else:
+        txt_over = font.render("GAME OVER", True, (255, 0, 0))
+        screen.blit(txt_over, (250, 130))
+
     pygame.display.flip()
+    clock.tick(60)

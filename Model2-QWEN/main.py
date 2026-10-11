@@ -1,47 +1,65 @@
 import tkinter as tk
 import random
-from tkinter import messagebox
 
-class GuessGame:
+class RunnerGame:
     def __init__(self, root):
         self.root = root
-        self.root.title("Guess the Number - Qwen Lab")
-        self.root.geometry("300x200")
-        
-        self.secret_number = random.randint(1, 100)
-        self.attempts = 0
-        
-        self.label = tk.Label(root, text="Guess a number between 1 and 100", font=("Arial", 12))
-        self.label.pack(pady=10)
-        
-        self.entry = tk.Entry(root, font=("Arial", 12))
-        self.entry.pack(pady=5)
-        
-        self.button = tk.Button(root, text="Submit Guess", command=self.check_guess, bg="blue", fg="white")
-        self.button.pack(pady=10)
-        
-        self.result_label = tk.Label(root, text="", font=("Arial", 11))
-        self.result_label.pack(pady=5)
+        self.root.title("Endless Runner - Qwen Lab")
+        self.canvas = tk.Canvas(root, width=600, height=300, bg="sky blue")
+        self.canvas.pack()
 
-    def check_guess(self):
-        try:
-            user_guess = int(self.entry.get())
-            self.attempts += 1
-            
-            if user_guess < self.secret_number:
-                self.result_label.config(text="Too low! Try again.", fg="orange")
-            elif user_guess > self.secret_number:
-                self.result_label.config(text="Too high! Try again.", fg="orange")
-            else:
-                messagebox.showinfo("Victory!", f"Correct! You did it in {self.attempts} attempts.")
-                self.secret_number = random.randint(1, 100)
-                self.attempts = 0
-                self.result_label.config(text="Game Reset! New number generated.", fg="green")
-            self.entry.delete(0, tk.END)
-        except ValueError:
-            messagebox.showerror("Error", "Please enter a valid integer.")
+        self.player_y = 220
+        self.player_velocity = 0
+        self.is_jumping = False
+        self.score = 0
+        self.game_over = False
+
+        self.canvas.create_rectangle(0, 250, 600, 300, fill="dark green")
+        self.player = self.canvas.create_rectangle(50, self.player_y, 80, 250, fill="red")
+        
+        self.obstacle_x = 600
+        self.obstacle = self.canvas.create_rectangle(self.obstacle_x, 220, self.obstacle_x + 20, 250, fill="black")
+        self.score_text = self.canvas.create_text(50, 30, text=f"Score: {self.score}", font=("Arial", 14), fill="black")
+
+        self.root.bind("<space>", self.jump)
+        self.update_game()
+
+    def jump(self, event):
+        if not self.is_jumping and not self.game_over:
+            self.player_velocity = -12
+            self.is_jumping = True
+
+    def update_game(self):
+        if self.game_over:
+            return
+
+        if self.is_jumping:
+            self.player_y += self.player_velocity
+            self.player_velocity += 0.8
+            if self.player_y >= 220:
+                self.player_y = 220
+                self.is_jumping = False
+            self.canvas.coords(self.player, 50, self.player_y, 80, 250)
+
+        self.obstacle_x -= 7
+        if self.obstacle_x < -20:
+            self.obstacle_x = 600
+            self.score += 1
+            self.canvas.itemconfig(self.score_text, text=f"Score: {self.score}")
+        self.canvas.coords(self.obstacle, self.obstacle_x, 220, self.obstacle_x + 20, 250)
+
+        p_coords = self.canvas.coords(self.player)
+        o_coords = self.canvas.coords(self.obstacle)
+
+        if p_coords[2] >= o_coords[0] and p_coords[0] <= o_coords[2]:
+            if p_coords[3] >= o_coords[1]:
+                self.game_over = True
+                self.canvas.create_text(300, 150, text="GAME OVER", fill="red", font=("Arial", 24, "bold"))
+                return
+
+        self.root.after(20, self.update_game)
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = GuessGame(root)
+    game = RunnerGame(root)
     root.mainloop()

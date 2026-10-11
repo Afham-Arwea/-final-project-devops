@@ -1,20 +1,16 @@
 # Comparative Benchmark Evaluation Report
 
-This report evaluates the code generation capabilities between Model 1 (GLM-4 9B) and Model 2 (Qwen 3 8B) based on a customized "Number Guessing Game with GUI" benchmark prompt.
+This report evaluates the code generation capabilities between Model 1 (GLM-4 9B) and Model 2 (Qwen 3 8B) based on a customized "Endless Runner Game with GUI" benchmark prompt.
 
 ## Evaluation Criteria Breakdown
 
 * **GUI Framework Integration**
-  * **GLM-4 (9B):** Utilizes `Pygame`, creating a rich multimedia-focused interactive application loop.
-  * **Qwen 3 (8B):** Utilizes `Tkinter`, creating an event-driven standard native application window.
+  * **GLM-4 (9B):** Utilizes `Pygame`, deploying a precise 60 FPS clock cycle rendering mechanism for interactive graphical pipelines.
+  * **Qwen 3 (8B):** Utilizes `Tkinter`, implementing native widget updates via event-driven scheduling queues (`.after()`).
 
-* **Game State Management**
-  * **GLM-4 (9B):** Employs an active game loop tracking user text inputs dynamically via continuous keypress events and redraw cycles.
-  * **Qwen 3 (8B):** Uses discrete event listeners linked directly to entry inputs and functional command buttons.
-
-* **Input Validation & Safety**
-  * **GLM-4 (9B):** Manages rendering strings manually, forcing explicit text boundary checking.
-  * **Qwen 3 (8B):** Leverages native standard try-except structures directly against widget string extraction logic.
+* **Jump Physics & Gravity Simulation**
+  * **GLM-4 (9B):** Tracks discrete floating-point additions to emulate constant kinematic gravitational force offsets inside a unified polling tick.
+  * **Qwen 3 (8B):** Uses custom parameter updates passing local scope delta shifts into recursive functional triggers.
 
 ## Empirical Conclusion
-**Qwen 3** provided a highly optimized desktop execution using native widgets, making it incredibly clean and simple. On the other hand, **GLM-4** treated the game as a graphical rendering engine via Pygame, which adds responsive visual control at the expense of infrastructure dependency.
+**Qwen 3** showcased clear application architecture efficiency by leveraging native desktop standard elements without deployment burdens. Alternatively, **GLM-4** provided fluid, granular control over visual tick sequences via Pygame, making it a powerful multimedia benchmark result at the expense of external environment requirements.
